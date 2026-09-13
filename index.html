@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hồng Đức & Hồng Hà | Thiệp cưới</title>
+  <meta name="description" content="Thiệp mời đám cưới của Hồng Đức và Hồng Hà.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="invitation-locked">
+  <section class="opening-stage" id="opening-stage" role="dialog" aria-modal="true" aria-label="Mở thiệp cưới">
+    <div class="opening-frame" aria-hidden="true">
+      <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+    </div>
+
+    <div class="opening-heading">
+      <p>Trân trọng báo tin hỷ</p>
+      <div class="opening-monogram" aria-hidden="true">囍</div>
+    </div>
+
+    <div class="envelope-scene" id="envelope-scene">
+      <div class="envelope-shadow" aria-hidden="true"></div>
+      <div class="envelope-back" aria-hidden="true"></div>
+
+      <article class="opening-letter" id="opening-letter" aria-label="Lời ngỏ" tabindex="-1">
+        <div class="opening-letter-border">
+          <span class="letter-ornament letter-ornament-top" aria-hidden="true">❦</span>
+          <p class="opening-letter-recipient">Gửi <span id="opening-guest-name">bạn thân mến</span>,</p>
+          <p class="opening-letter-copy">
+            Ngày vui của chúng mình sẽ thật trọn vẹn khi có bạn ở bên, cùng sẻ chia niềm hạnh phúc này.
+          </p>
+          <p class="opening-letter-copy opening-letter-copy-secondary">
+            Cảm ơn bạn đã là một phần của câu chuyện và sẽ cùng chúng mình lưu giữ khoảnh khắc yêu thương này.
+          </p>
+          <p class="opening-letter-signoff">Với tất cả tình yêu thương</p>
+          <p class="opening-letter-signature script" id="opening-couple-signature">Đức &amp; Hà</p>
+          <button class="enter-invitation" id="enter-invitation" type="button" disabled>
+            <span>cuộn xuống</span>
+            <span class="enter-arrow" aria-hidden="true"></span>
+          </button>
+          <span class="letter-ornament letter-ornament-bottom" aria-hidden="true">❦</span>
+        </div>
+      </article>
+
+      <div class="envelope-flap" aria-hidden="true"></div>
+      <div class="envelope-pocket" aria-hidden="true"></div>
+
+      <button
+        class="wax-seal"
+        id="wax-seal"
+        type="button"
+        aria-controls="opening-letter"
+        aria-expanded="false"
+        aria-label="Mở phong bì"
+      >
+        <span class="wax-ring" aria-hidden="true"></span>
+        <span class="wax-words" aria-hidden="true">
+          <span>NHÀ</span><span>CÓ</span><span>HỶ</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <div class="site-content" id="site-content" inert>
+  <nav class="nav">
+    <a class="nav-mark" id="couple-mark" href="#top">Đ &amp; H</a>
+    <div class="nav-links">
+      <a href="#story">Chuyện mình</a>
+      <a href="#wedding">Ngày cưới</a>
+      <a href="#gallery">Khoảnh khắc</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Chuyển sang giao diện tối" aria-pressed="false">☾</button>
+    </div>
+  </nav>
+
+  <header class="hero" id="top" tabindex="-1">
+    <img class="hero-image" id="hero-image" src="" alt="">
+    <div class="hero-content">
+      <div class="hero-kicker" id="hero-kicker"></div>
+      <h1 id="couple-names"></h1>
+      <div class="countdown" id="countdown" aria-label="Đếm ngược đến ngày cưới" aria-live="polite">
+        <div class="countdown-item"><strong id="countdown-days">00</strong><span>Ngày</span></div>
+        <div class="countdown-item"><strong id="countdown-hours">00</strong><span>Giờ</span></div>
+        <div class="countdown-item"><strong id="countdown-minutes">00</strong><span>Phút</span></div>
+        <div class="countdown-item"><strong id="countdown-seconds">00</strong><span>Giây</span></div>
+      </div>
+      <p class="countdown-complete" id="countdown-complete" hidden></p>
+      <a class="save-date" href="#wedding">Lưu lại ngày này</a>
+      <div class="hero-date" id="hero-message"></div>
+    </div>
+    <div class="scroll-cue">Khám phá</div>
+  </header>
+
+  <main>
+    <section id="story">
+      <div class="shell split">
+        <img class="photo-tall reveal" id="story-image" src="" alt="" loading="lazy">
+        <div class="reveal">
+          <div class="eyebrow">Câu chuyện của chúng mình</div>
+          <h2 class="display section-title">Từ một lời chào<br><em>đến một đời bên nhau</em></h2>
+          <p class="copy" id="story-intro"></p>
+          <div class="story-list" id="story-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="events" id="wedding">
+      <div class="shell">
+        <div class="eyebrow">Ngày trọng đại</div>
+        <h2 class="display section-title">Hẹn gặp bạn<br><em>trong ngày vui</em></h2>
+        <p class="copy" id="wedding-location"></p>
+        <div class="events-grid" id="events-grid"></div>
+      </div>
+    </section>
+
+    <section class="gallery" id="gallery">
+      <div class="shell">
+        <div class="gallery-head">
+          <div>
+            <div class="eyebrow">Bộ ảnh</div>
+            <h2 class="display section-title">Album cưới</h2>
+          </div>
+          <p class="copy">Một vài bức ảnh thay cho lời kể.</p>
+        </div>
+        <div class="gallery-grid" id="gallery-grid"></div>
+        <button class="gallery-more" id="gallery-more" type="button" aria-controls="gallery-grid" aria-expanded="false">
+          Xem thêm ảnh
+        </button>
+      </div>
+    </section>
+
+    <section class="invitation" id="invitation">
+      <div class="shell invitation-card reveal">
+        <div class="eyebrow">Lời mời</div>
+        <h2 class="display">Một lời mời<br><em>từ chúng mình</em></h2>
+        <div class="invitation-copy">
+          <p style="font-style: italic;">Gửi <strong id="invitation-guest-name">bạn</strong> thân mến,</p>
+          <p>Có những hành trình bắt đầu từ những điều rất đỗi bình dị, và tình yêu của chúng mình cũng vậy. Nhìn lại quãng thời gian đã qua, điều khiến chúng mình cảm thấy trọn vẹn nhất không chỉ là vì đã tìm thấy <strong>một nửa của đời mình</strong>, mà còn vì luôn có sự đồng hành, chứng kiến và ủng hộ từ những người anh, người chị, người em, người bạn tuyệt vời như <span id="invitation-guest-reference">bạn</span>.</p>
+          <p>Sau những tháng ngày vun vén, chúng mình đã sẵn sàng bước sang <strong>một chương mới của cuộc đời</strong> – chương của sự gắn kết và hành trình xây dựng một mái ấm gia đình.</p>
+          <p>Sự hiện diện của <span id="invitation-guest-reference-second">bạn</span> không chỉ là niềm vinh hạnh, mà còn là mảnh ghép hoàn hảo khiến ngày vui của chúng mình trở nên trọn vẹn và đáng nhớ nhất. Chúng mình mong chờ sự có mặt của <span id="invitation-guest-reference-third">bạn</span> vào <strong>Tiệc cưới 3/10/2026</strong>.</p>
+          <p class="invitation-signoff">Trân trọng &amp; Mong chờ,</p>
+          <p class="invitation-signature script" id="invitation-signature"></p>
+        </div>
+        <button class="rsvp-toggle" id="rsvp-toggle" type="button" aria-controls="rsvp-modal" aria-expanded="false">Gửi lời chúc</button>
+      </div>
+    </section>
+
+    <section class="guestbook" id="guestbook">
+      <div class="shell reveal">
+        <div class="eyebrow">Sổ lưu niệm</div>
+        <h2 class="display">Lời chúc<br><em>được nâng niu</em></h2>
+        <div class="guestbook-grid" id="guestbook-grid" aria-live="polite"></div>
+        <button class="guestbook-more" id="guestbook-more" type="button" aria-controls="guestbook-grid" aria-expanded="false">Xem thêm lời chúc</button>
+      </div>
+    </section>
+
+    <div class="rsvp-modal" id="rsvp-modal" role="dialog" aria-modal="true" aria-labelledby="rsvp-modal-title" hidden>
+      <form class="rsvp-form" id="rsvp-form">
+        <button class="rsvp-close" id="rsvp-close" type="button" aria-label="Đóng biểu mẫu">×</button>
+        <h2 class="display" id="rsvp-modal-title">Xác nhận<br><em>tham dự</em></h2>
+        <p class="rsvp-intro">Chúng mình rất mong nhận được phản hồi từ bạn.</p>
+          <div class="rsvp-fields">
+            <label>Tên khách mời<input id="rsvp-name" name="name" type="text" autocomplete="name" required></label>
+            <label>Số lượng
+              <select id="rsvp-count" name="count" required>
+                <option value="1">1 người</option>
+                <option value="2">2 người</option>
+                <option value="3">3 người</option>
+              </select>
+            </label>
+          </div>
+          <label class="rsvp-attendance-label">Bạn có thể tham dự không?
+            <select id="rsvp-attendance" name="attendance" required>
+              <option value="" selected disabled>Chọn phản hồi</option>
+              <option value="Chắc chắn tham dự">Chắc chắn tham dự</option>
+              <option value="Chưa chắc chắn">Chưa chắc chắn</option>
+              <option value="Không thể tham dự">Không thể tham dự</option>
+            </select>
+          </label>
+          <label>Lời chúc<textarea name="message" rows="4" placeholder="Gửi lời chúc đến cô dâu và chú rể"></textarea></label>
+          <button class="rsvp-submit" type="submit">Gửi đăng ký</button>
+          <p class="rsvp-feedback" id="rsvp-feedback" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <section class="venue" id="venue">
+      <div class="shell venue-card reveal">
+        <img class="venue-image" id="venue-image" src="" alt="" loading="lazy">
+        <div class="venue-info">
+          <div class="eyebrow">Địa điểm</div>
+          <h2 class="display" id="venue-title"></h2>
+          <p id="venue-address"></p>
+          <a id="venue-map" href="#" target="_blank" rel="noreferrer">Chỉ đường</a>
+          <iframe class="venue-map-embed" id="venue-map-embed" title="Bản đồ địa điểm tiệc cưới" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section class="registry">
+      <div class="shell reveal">
+        <div class="eyebrow">Hộp Mừng Hỷ</div>
+        <h2 class="display">Sự hiện diện của bạn<br><em>đã là món quà ý nghĩa nhất</em></h2>
+        <p>Nếu bạn muốn gửi lời chúc bằng một món quà nhỏ, dưới đây là thông tin chuyển khoản của hai gia đình.</p>
+        <div class="bank-grid" id="bank-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="script" id="footer-names"></div>
+    <p id="footer-message"></p>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Xem ảnh">
+    <button class="close" type="button" aria-label="Đóng">×</button>
+    <img src="" alt="Ảnh phóng to">
+  </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
