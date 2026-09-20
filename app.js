@@ -6,6 +6,8 @@
     inviteApiUrl: "https://script.google.com/macros/s/AKfycbxM7zLUDR_AsjkIt-UVIfATmPt6TtP1hLFYzFSZXZCqOu9_HyGI1rrjxtVvG_OXXmmDoQ/exec",
     inviteCachePrefix: "wedding-invite:",
     inviteCacheTtlMs: 3600000,
+    // Apps Script can take several seconds to wake up on a first mobile visit.
+    inviteRequestTimeoutMs: 12000,
     rsvpStorageKey: "wedding-rsvp",
     guestbookStorageKey: "wedding-guestbook",
     guestbookInitialBatchSize: 3,
@@ -277,7 +279,10 @@
       script.onerror = () => cleanup();
       script.src = `${WEDDING_CONFIG.inviteApiUrl}${separator}invite=${encodeURIComponent(invite)}&callback=${callbackName}`;
       document.head.append(script);
-      timeoutId = window.setTimeout(cleanup, 3500);
+      timeoutId = window.setTimeout(
+        cleanup,
+        WEDDING_CONFIG.inviteRequestTimeoutMs,
+      );
     });
 
   const contextFromInviteData = (data) => {
@@ -322,7 +327,10 @@
     const cachedData = getCachedInviteData(invite);
     if (cachedData) return contextFromInviteData(cachedData);
 
-    const data = await requestInviteData(invite);
+    let data = await requestInviteData(invite);
+    // A second request handles a transient Apps Script cold start or mobile
+    // network hand-off without showing the default invitation permanently.
+    if (!data?.ok) data = await requestInviteData(invite);
     if (!data?.ok) return getInvitationContext();
     cacheInviteData(invite, data);
     return contextFromInviteData(data);
