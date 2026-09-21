@@ -8,6 +8,7 @@
     inviteCacheTtlMs: 3600000,
     // Apps Script can take several seconds to wake up on a first mobile visit.
     inviteRequestTimeoutMs: 12000,
+    inviteOpeningDelayMs: 3000,
     rsvpStorageKey: "wedding-rsvp",
     guestbookStorageKey: "wedding-guestbook",
     guestbookInitialBatchSize: 3,
@@ -900,6 +901,13 @@
     let isEntering = false;
     let touchStartY = null;
 
+    const unlockEnvelope = () => {
+      seal.disabled = false;
+      seal.setAttribute("aria-label", "Mở phong bì");
+      stage.removeAttribute("aria-busy");
+      seal.focus({ preventScroll: true });
+    };
+
     const revealLetterActions = () => {
       canEnter = true;
       enterButton.disabled = false;
@@ -951,12 +959,15 @@
     const guestName = guest ? `${guest} thân mến` : WEDDING_CONFIG.defaultGuest;
     setText("#opening-guest-name", guestName);
     setText("#opening-couple-signature", couple.signature);
+    stage.setAttribute("aria-busy", "true");
+    seal.disabled = true;
+    seal.setAttribute("aria-label", "Đang chuẩn bị thiệp");
     seal.addEventListener("click", openEnvelope);
     enterButton.addEventListener("click", enterInvitation);
     stage.addEventListener("wheel", enterOnScroll, { passive: true });
     stage.addEventListener("touchstart", rememberTouchStart, { passive: true });
     stage.addEventListener("touchend", enterOnSwipe, { passive: true });
-    window.requestAnimationFrame(() => seal.focus({ preventScroll: true }));
+    return unlockEnvelope;
   };
 
   const startInvitation = () => {
@@ -970,7 +981,11 @@
     setupRsvp();
     setupGiftCopy();
     setupLightbox();
-    setupOpeningInvitation(initialContext);
+    const unlockEnvelope = setupOpeningInvitation(initialContext);
+
+    // Keep the envelope closed briefly so guest-specific data can arrive before
+    // the recipient opens it. It always unlocks after three seconds.
+    window.setTimeout(unlockEnvelope, WEDDING_CONFIG.inviteOpeningDelayMs);
 
     loadInvitationContext().then((invitationContext) => {
       renderPage(invitationContext);

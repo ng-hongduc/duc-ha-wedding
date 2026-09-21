@@ -350,6 +350,10 @@ body.invitation-locked {
 .wax-seal:hover {
   transform: translate(-50%, -50%) rotate(0) scale(1.05);
 }
+.wax-seal:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
 .wax-ring {
   position: absolute;
   inset: 8px;
