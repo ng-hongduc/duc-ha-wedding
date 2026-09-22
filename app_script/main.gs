@@ -109,7 +109,8 @@ function findGuestByInvite_(invite) {
 }
 
 function findGuestRecord_(invite) {
-  if (!/^[A-Za-z0-9_-]{9}$/.test(invite)) return null;
+  const parsedInvite = parseInvite_(invite);
+  if (!parsedInvite) return null;
 
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheets().find((candidate) => {
@@ -124,18 +125,46 @@ function findGuestRecord_(invite) {
   });
   if (!sheet || sheet.getLastRow() < 2) return null;
 
-  const values = sheet.getDataRange().getDisplayValues();
-  const headers = values[0].map((header) => String(header).trim().toLowerCase());
+  const headers = sheet
+    .getRange(1, 1, 1, sheet.getLastColumn())
+    .getDisplayValues()[0]
+    .map((header) => String(header).trim().toLowerCase());
   const index = Object.fromEntries(headers.map((header, position) => [header, position]));
-  const rowOffset = values.slice(1).findIndex((entry) => {
-    const storedInvite = String(entry[index.invite] || '').trim();
-    if (storedInvite === invite) return true;
-    const match = storedInvite.match(/[?&]invite=([^&]+)/);
-    return match && decodeURIComponent(match[1]) === invite;
-  });
-  if (rowOffset < 0) return null;
+  const sttCell = sheet
+    .getRange(2, index.stt + 1, sheet.getLastRow() - 1, 1)
+    .createTextFinder(parsedInvite.stt)
+    .matchEntireCell(true)
+    .findNext();
+  if (!sttCell) return null;
 
-  return { sheet, index, row: values[rowOffset + 1], rowNumber: rowOffset + 2 };
+  const rowNumber = sttCell.getRow();
+  const row = sheet
+    .getRange(rowNumber, 1, 1, headers.length)
+    .getDisplayValues()[0];
+
+  // STT chooses the row quickly; hashes make sure the URL belongs to that row.
+  if (
+    INVITE_HASH(row[index.side]) !== parsedInvite.sideHash ||
+    INVITE_HASH(row[index.to]) !== parsedInvite.toHash
+  ) {
+    return null;
+  }
+
+  return { sheet, index, row, rowNumber };
+}
+
+function parseInvite_(invite) {
+  const value = String(invite || '').trim();
+  if (!/^[A-Za-z0-9_-]{9,11}$/.test(value)) return null;
+
+  const stt = value.slice(4, -4);
+  if (!/^([1-9]\d?|100)$/.test(stt)) return null;
+
+  return {
+    sideHash: value.slice(0, 4),
+    stt,
+    toHash: value.slice(-4),
+  };
 }
 
 function jsonResponse_(data) {
