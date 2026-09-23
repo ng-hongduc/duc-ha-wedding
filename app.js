@@ -13,33 +13,6 @@
     guestbookStorageKey: "wedding-guestbook",
     guestbookInitialBatchSize: 3,
     guestbookBatchSize: 3,
-    guestbookSamples: [
-      {
-        name: "Anh Minh & Chị Lan",
-        message: "Chúc hai em trăm năm hạnh phúc, luôn yêu thương và đồng hành cùng nhau trên mọi chặng đường.",
-        createdAt: "2026-09-22T19:30:00+07:00",
-      },
-      {
-        name: "Thu Hà",
-        message: "Chúc mừng hạnh phúc của hai bạn! Mong ngày vui sẽ thật trọn vẹn và ngập tràn tiếng cười.",
-        createdAt: "2026-09-20T09:15:00+07:00",
-      },
-      {
-        name: "Nhóm bạn đại học",
-        message: "Chúc cho hành trình mới của Hà và Đức luôn bình yên, ấm áp và đầy ắp yêu thương.",
-        createdAt: "2026-09-18T14:45:00+07:00",
-      },
-      {
-        name: "Gia đình cô Mai",
-        message: "Chúc hai con có một ngày cưới thật đẹp và một mái ấm luôn ngập tràn niềm vui.",
-        createdAt: "2026-09-16T20:10:00+07:00",
-      },
-      {
-        name: "Quang Huy",
-        message: "Mừng cho hai bạn đã tìm thấy nhau. Chúc tình yêu luôn là điều dịu dàng nhất mỗi ngày.",
-        createdAt: "2026-09-14T11:20:00+07:00",
-      },
-    ],
     dateLabel: "04.10.2026",
     weddingDateTime: "2026-10-04T15:00:00+07:00",
     locationLabel: "03–04 tháng 10 năm 2026 · Hà Nội",
@@ -262,9 +235,9 @@
     };
   };
 
-  const requestInviteData = (invite) =>
+  const requestJsonp = (params, callbackPrefix) =>
     new Promise((resolve) => {
-      const callbackName = `weddingInvite${Date.now()}`;
+      const callbackName = `${callbackPrefix}${Date.now()}`;
       const script = document.createElement("script");
       const separator = WEDDING_CONFIG.inviteApiUrl.includes("?") ? "&" : "?";
       let timeoutId;
@@ -278,13 +251,19 @@
 
       window[callbackName] = (data) => cleanup(data);
       script.onerror = () => cleanup();
-      script.src = `${WEDDING_CONFIG.inviteApiUrl}${separator}invite=${encodeURIComponent(invite)}&callback=${callbackName}`;
+      const query = new URLSearchParams({ ...params, callback: callbackName });
+      script.src = `${WEDDING_CONFIG.inviteApiUrl}${separator}${query}`;
       document.head.append(script);
       timeoutId = window.setTimeout(
         cleanup,
         WEDDING_CONFIG.inviteRequestTimeoutMs,
       );
     });
+
+  const requestInviteData = (invite) =>
+    requestJsonp({ invite }, "weddingInvite");
+  const requestGuestbookData = () =>
+    requestJsonp({ action: "guestbook" }, "weddingGuestbook");
 
   const contextFromInviteData = (data) => {
     const side = data.side === "bride" ? "bride" : "groom";
@@ -490,15 +469,25 @@
     }
   };
 
+  let remoteGuestbookEntries = [];
+
   const getAllGuestbookEntries = () =>
-    [...WEDDING_CONFIG.guestbookSamples, ...getGuestbookEntries()].sort(
+    [...remoteGuestbookEntries, ...getGuestbookEntries()].sort(
       (first, second) => new Date(second.createdAt) - new Date(first.createdAt),
     );
 
   let visibleGuestbookCount = WEDDING_CONFIG.guestbookInitialBatchSize;
 
+  const loadGuestbook = async () => {
+    const data = await requestGuestbookData();
+    if (!data?.ok || !Array.isArray(data.entries)) return;
+    remoteGuestbookEntries = data.entries;
+    renderGuestbook();
+  };
+
   const formatGuestbookTime = (createdAt, dateFormatter) => {
     const createdDate = new Date(createdAt);
+    if (Number.isNaN(createdDate.getTime())) return "Gần đây";
     const now = new Date();
     const isToday =
       createdDate.getFullYear() === now.getFullYear() &&
@@ -981,6 +970,7 @@
     setupRsvp();
     setupGiftCopy();
     setupLightbox();
+    loadGuestbook();
     const unlockEnvelope = setupOpeningInvitation(initialContext);
 
     // Keep the envelope closed briefly so guest-specific data can arrive before
