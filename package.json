@@ -1,0 +1,11 @@
+{
+  "name": "duc-ha-wedding-invitation",
+  "private": true,
+  "scripts": {
+    "build:assets": "esbuild app.js --bundle --minify --target=es2020 --outfile=dist/app.min.js && esbuild styles.css --minify --outfile=dist/styles.min.css",
+    "build": "npm run build:assets && node scripts/build-site.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
