@@ -3,7 +3,8 @@
   const WEDDING_CONFIG = {
     themeStorageKey: "wedding-theme",
     // Paste the deployed Apps Script Web App URL ending in /exec here.
-    inviteApiUrl: "https://script.google.com/macros/s/AKfycbxM7zLUDR_AsjkIt-UVIfATmPt6TtP1hLFYzFSZXZCqOu9_HyGI1rrjxtVvG_OXXmmDoQ/exec",
+    inviteApiUrl:
+      "https://script.google.com/macros/s/AKfycbyWGbex5y1sI36EyaMdX4fcK6gwrnQaPOKqrjWeSo1rdBoKz7M1YvlKpAN7lvs2YHWFEw/exec",
     inviteCachePrefix: "wedding-invite:",
     inviteCacheTtlMs: 3600000,
     // Apps Script can take several seconds to wake up on a first mobile visit.
@@ -13,6 +14,35 @@
     guestbookStorageKey: "wedding-guestbook",
     guestbookInitialBatchSize: 3,
     guestbookBatchSize: 3,
+    guestbookSamples: [
+      {
+        name: "Gia đình cô Mai",
+        message:
+          "Chúc hai con có một ngày cưới thật đẹp và một mái ấm luôn ngập tràn niềm vui.",
+        createdAt: "2026-09-24T10:10:00+07:00",
+      },
+      {
+        name: "Cháu Huy",
+        message: "Mừng hạnh phúc cô chú.",
+        createdAt: "2026-09-24T11:20:00+07:00",
+      },
+      {
+        name: "Chị Lan",
+        message:
+          "Chúc hai em trăm năm hạnh phúc, luôn yêu thương và đồng hành cùng nhau trên mọi chặng đường.",
+        createdAt: "2026-09-24T12:10:00+07:00",
+      },
+      {
+        name: "Thu Hà",
+        message: "Chúc mừng hạnh phúc đôi bạn trẻ.",
+        createdAt: "2026-09-24T12:15:00+07:00",
+      },
+      {
+        name: "Bạn đại học",
+        message: "Chúc cho hành trình mới của Đức luôn bình yên nha.",
+        createdAt: "2026-09-24T13:45:00+07:00",
+      },
+    ],
     dateLabel: "04.10.2026",
     weddingDateTime: "2026-10-04T15:00:00+07:00",
     locationLabel: "03–04 tháng 10 năm 2026 · Hà Nội",
@@ -279,9 +309,11 @@
   const getCachedInviteData = (invite) => {
     try {
       const cached = JSON.parse(
-        safeStorage.get(`${WEDDING_CONFIG.inviteCachePrefix}${invite}`) || "null",
+        safeStorage.get(`${WEDDING_CONFIG.inviteCachePrefix}${invite}`) ||
+          "null",
       );
-      if (!cached || cached.expiresAt <= Date.now() || !cached.data?.ok) return null;
+      if (!cached || cached.expiresAt <= Date.now() || !cached.data?.ok)
+        return null;
       return cached.data;
     } catch {
       return null;
@@ -349,29 +381,30 @@
       ...WEDDING_CONFIG.events.map(([number, title, time, description]) =>
         createElement(
           "article",
-          { className: `event reveal${number === "02" ? " event-featured" : ""}` },
+          {
+            className: `event reveal${number === "02" ? " event-featured" : ""}`,
+          },
           [
-          createElement("div", {
-            className: "event-number",
-            textContent: number,
-          }),
-          createElement("h3", { textContent: title }),
-          createElement("p", { textContent: time }),
-          createElement("p", {
-            textContent: description.replace("{venueSide}", venueSide),
-          }),
-          createElement("a", {
-            textContent: "Xem địa điểm",
-            attributes: { href: "#venue" },
-          }),
+            createElement("div", {
+              className: "event-number",
+              textContent: number,
+            }),
+            createElement("h3", { textContent: title }),
+            createElement("p", { textContent: time }),
+            createElement("p", {
+              textContent: description.replace("{venueSide}", venueSide),
+            }),
+            createElement("a", {
+              textContent: "Xem địa điểm",
+              attributes: { href: "#venue" },
+            }),
           ],
         ),
       ),
     );
   };
 
-  const thumbnailFor = (fullImage) =>
-    fullImage.replace("img/", "img/thumbs/");
+  const thumbnailFor = (fullImage) => fullImage.replace("img/", "img/thumbs/");
 
   const createGalleryItem = ([alt, fullImage], index) =>
     createElement(
@@ -440,7 +473,10 @@
           }),
           createElement("h3", { textContent: bank }),
           createElement("p", { textContent: owner }),
-          createElement("p", { className: "bank-account", textContent: account }),
+          createElement("p", {
+            className: "bank-account",
+            textContent: account,
+          }),
           createElement("button", {
             className: "copy-account",
             textContent: "Sao chép số tài khoản",
@@ -471,10 +507,15 @@
 
   let remoteGuestbookEntries = [];
 
-  const getAllGuestbookEntries = () =>
-    [...remoteGuestbookEntries, ...getGuestbookEntries()].sort(
+  const getAllGuestbookEntries = () => [
+    // The API already sends every Sheet entry newest first. Locally submitted
+    // wishes stay at the top immediately; samples remain visual fallbacks.
+    ...getGuestbookEntries().sort(
       (first, second) => new Date(second.createdAt) - new Date(first.createdAt),
-    );
+    ),
+    ...remoteGuestbookEntries,
+    ...WEDDING_CONFIG.guestbookSamples,
+  ];
 
   let visibleGuestbookCount = WEDDING_CONFIG.guestbookInitialBatchSize;
 
@@ -523,23 +564,26 @@
       timeStyle: "short",
     });
     guestbook.replaceChildren(
-      ...entries.slice(0, visibleGuestbookCount).map(({ name, message, createdAt }) =>
-        createElement("article", { className: "guestbook-entry" }, [
-          createElement("p", {
-            className: "guestbook-message",
-            textContent: `“${message}”`,
-          }),
-          createElement("div", { className: "guestbook-meta" }, [
-            createElement("strong", { textContent: name }),
-            createElement("time", {
-              textContent: formatGuestbookTime(createdAt, dateFormatter),
-              attributes: { datetime: createdAt },
+      ...entries
+        .slice(0, visibleGuestbookCount)
+        .map(({ name, message, createdAt }) =>
+          createElement("article", { className: "guestbook-entry" }, [
+            createElement("p", {
+              className: "guestbook-message",
+              textContent: `“${message}”`,
             }),
+            createElement("div", { className: "guestbook-meta" }, [
+              createElement("strong", { textContent: name }),
+              createElement("time", {
+                textContent: formatGuestbookTime(createdAt, dateFormatter),
+                attributes: { datetime: createdAt },
+              }),
+            ]),
           ]),
-        ]),
-      ),
+        ),
     );
-    moreButton.hidden = entries.length <= WEDDING_CONFIG.guestbookInitialBatchSize;
+    moreButton.hidden =
+      entries.length <= WEDDING_CONFIG.guestbookInitialBatchSize;
     moreButton.setAttribute(
       "aria-expanded",
       String(visibleGuestbookCount > WEDDING_CONFIG.guestbookInitialBatchSize),
@@ -832,7 +876,8 @@
           );
           renderGuestbook();
         }
-        feedback.textContent = "Cảm ơn bạn! Chúng mình đã ghi nhận phản hồi của bạn.";
+        feedback.textContent =
+          "Cảm ơn bạn! Chúng mình đã ghi nhận phản hồi của bạn.";
       } catch {
         feedback.textContent =
           "Chưa thể gửi đăng ký. Vui lòng kiểm tra kết nối và thử lại.";
@@ -960,7 +1005,11 @@
   };
 
   const startInvitation = () => {
-    const initialContext = getInvitationContext();
+    const invite = new URLSearchParams(location.search).get("invite");
+    const cachedInviteData = invite ? getCachedInviteData(invite) : null;
+    const initialContext = cachedInviteData
+      ? contextFromInviteData(cachedInviteData)
+      : getInvitationContext();
     renderPage(initialContext);
     setupCountdown();
     setupRevealAnimation();
@@ -972,10 +1021,22 @@
     setupLightbox();
     loadGuestbook();
     const unlockEnvelope = setupOpeningInvitation(initialContext);
+    let isEnvelopeUnlocked = false;
+    const unlockWhenReady = () => {
+      if (isEnvelopeUnlocked) return;
+      isEnvelopeUnlocked = true;
+      unlockEnvelope();
+    };
 
-    // Keep the envelope closed briefly so guest-specific data can arrive before
-    // the recipient opens it. It always unlocks after three seconds.
-    window.setTimeout(unlockEnvelope, WEDDING_CONFIG.inviteOpeningDelayMs);
+    // Cached data can open immediately. A first visit always reserves three
+    // seconds for the API, but is never blocked longer than that if it is slow.
+    const openingTimeoutId = cachedInviteData || !invite
+      ? null
+      : window.setTimeout(
+          unlockWhenReady,
+          WEDDING_CONFIG.inviteOpeningDelayMs,
+        );
+    if (cachedInviteData || !invite) unlockWhenReady();
 
     loadInvitationContext().then((invitationContext) => {
       renderPage(invitationContext);
@@ -985,6 +1046,7 @@
         : WEDDING_CONFIG.defaultGuest;
       setText("#opening-guest-name", guestName);
       setText("#opening-couple-signature", invitationContext.couple.signature);
+      if (openingTimeoutId === null) unlockWhenReady();
     });
   };
 
