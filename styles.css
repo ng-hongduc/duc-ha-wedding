@@ -538,16 +538,17 @@ body.invitation-locked {
   }
 }
 body[data-theme="dark"] {
-  --ink: #eee7dd;
-  --muted: #b8afa5;
-  --cream: #2e2a26;
-  --paper: #1c1a18;
-  --sage: #b8c5ae;
-  --line: #4b443d;
-  --deep: #11100f;
-  --deep-muted: #c2b8ad;
-  --venue: #3b473c;
-  --white: #f7f2ea;
+  --ink: #f2ece3;
+  --muted: #c9c0b6;
+  --cream: #2b2825;
+  --paper: #191715;
+  --sage: #c3d1b8;
+  --line: #5d554d;
+  --deep: #100f0e;
+  --deep-muted: #d0c6bb;
+  --venue: #354537;
+  --white: #282420;
+  color-scheme: dark;
 }
 img {
   display: block;
@@ -1041,7 +1042,7 @@ section {
 .rsvp-submit {
   border: 1px solid var(--ink);
   background: var(--ink);
-  color: white;
+  color: var(--paper);
   font: 500 0.7rem var(--sans);
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -1135,7 +1136,7 @@ section {
 .rsvp-feedback {
   min-height: 1.5em;
   margin: 16px 0 0;
-  color: #65765d;
+  color: var(--sage);
   line-height: 1.6;
 }
 .rsvp-toggle:focus-visible,
@@ -1219,7 +1220,7 @@ body.rsvp-open {
 .guestbook-more:hover,
 .guestbook-more:focus-visible {
   background: var(--ink);
-  color: white;
+  color: var(--paper);
 }
 .venue {
   background: var(--cream);
@@ -1255,7 +1256,7 @@ body.rsvp-open {
   margin-top: 20px;
   padding: 13px 18px;
   background: var(--ink);
-  color: white;
+  color: var(--paper);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1334,11 +1335,11 @@ body.rsvp-open {
 .copy-account:hover,
 .copy-account:focus-visible {
   background: var(--ink);
-  color: white;
+  color: var(--paper);
 }
 .copy-feedback {
   min-height: 1.5em;
-  color: #65765d;
+  color: var(--sage);
 }
 footer {
   padding: 92px 24px;
