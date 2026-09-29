@@ -173,20 +173,19 @@ function findGuestRecord_(invite) {
     .getDisplayValues()[0]
     .map((header) => String(header).trim().toLowerCase());
   const index = Object.fromEntries(headers.map((header, position) => [header, position]));
-  const sttCell = sheet
-    .getRange(2, index.stt + 1, sheet.getLastRow() - 1, 1)
-    .createTextFinder(parsedInvite.stt)
-    .matchEntireCell(true)
-    .findNext();
-  if (!sttCell) return null;
-
-  const rowNumber = sttCell.getRow();
+  // Data rows follow a fixed index: STT x is always on spreadsheet row x + 1.
+  // This avoids scanning the whole STT column for every invite lookup.
+  const rowNumber = Number(parsedInvite.stt) + 1;
+  if (!Number.isSafeInteger(rowNumber) || rowNumber > sheet.getLastRow()) {
+    return null;
+  }
   const row = sheet
     .getRange(rowNumber, 1, 1, headers.length)
     .getDisplayValues()[0];
 
-  // STT chooses the row quickly; hashes make sure the URL belongs to that row.
+  // Validate the index and hashes so an invalid URL can never address another row.
   if (
+    String(row[index.stt]).trim() !== parsedInvite.stt ||
     INVITE_HASH(row[index.side]) !== parsedInvite.sideHash ||
     INVITE_HASH(row[index.to]) !== parsedInvite.toHash
   ) {
@@ -217,10 +216,10 @@ function getTimestampIndex_(index) {
 
 function parseInvite_(invite) {
   const value = String(invite || '').trim();
-  if (!/^[A-Za-z0-9_-]{9,11}$/.test(value)) return null;
+  if (!/^[A-Za-z0-9_-]{9,}$/.test(value)) return null;
 
   const stt = value.slice(4, -4);
-  if (!/^([1-9]\d?|100)$/.test(stt)) return null;
+  if (!/^[1-9]\d*$/.test(stt)) return null;
 
   return {
     sideHash: value.slice(0, 4),

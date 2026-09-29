@@ -7,6 +7,8 @@
       "https://script.google.com/macros/s/AKfycbyWGbex5y1sI36EyaMdX4fcK6gwrnQaPOKqrjWeSo1rdBoKz7M1YvlKpAN7lvs2YHWFEw/exec",
     inviteCachePrefix: "wedding-invite:",
     inviteCacheTtlMs: 3600000,
+    // First four characters of INVITE_HASH("side") in Apps Script.
+    inviteSidePrefixes: { groom: "CwJI", bride: "OQhT" },
     // Apps Script can take several seconds to wake up on a first mobile visit.
     inviteRequestTimeoutMs: 12000,
     inviteOpeningDelayMs: 3000,
@@ -254,8 +256,13 @@
 
   const getInvitationContext = () => {
     const urlParams = new URLSearchParams(location.search);
-    const params = new URLSearchParams(decodeInvite(urlParams.get("invite")));
-    const side = params.get("side") === "bride" ? "bride" : "groom";
+    const invite = urlParams.get("invite") || "";
+    const params = new URLSearchParams(decodeInvite(invite));
+    const side = params.get("side") === "bride"
+      ? "bride"
+      : invite.startsWith(WEDDING_CONFIG.inviteSidePrefixes.bride)
+        ? "bride"
+        : "groom";
     return {
       side,
       couple: WEDDING_CONFIG.couples[side],

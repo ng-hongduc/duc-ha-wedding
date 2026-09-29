@@ -23,6 +23,6 @@ function GEN_INVITE_URL(stt, side, to) {
   const cleanSide = String(side || 'groom').trim();
   const cleanTo = String(to || '').trim();
 
-  if (!/^([1-9]\d?|100)$/.test(cleanStt)) return '';
+  if (!/^[1-9]\d*$/.test(cleanStt)) return '';
   return `${INVITE_HASH(cleanSide)}${cleanStt}${INVITE_HASH(cleanTo)}`;
 }
